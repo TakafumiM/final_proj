@@ -3,92 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mouse Activity and Temperature Data Visualization</title>
+    <title>Mouse Temperature and Activity Visualization</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
     <link rel="stylesheet" href="styles.css">
     <script type="module" src="main.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
-    <div id="controls">
-        <label for="sex">Select Sex:</label>
-        <select id="sex">
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-        </select>
+    <div class="container">
+        <section class="intro">
+            <h1>Mouse Temperature and Activity Visualization</h1>
+            <p>Explore the relationship between mouse activity and temperature data.</p>
+        </section>
+
+        <section class="body">
+            <h1>Estrus period and its effect on female mouse</h1>
+            <p>
+                Like other non-primate mammals like horses, pigs and cows, mouses also has estrus cycle.
+                <br>An estrus cycle is a recurring period of sexual receptivity and fertility. In easy words, female mouses want to make children in this period.
+                <br>While more activity and higher temperature are expected in this period, it does not mean that estrus period is a good indicator to predict mouses' activity level and temperatures.
+            </p>
+        <img src="image/estrus_effects.png" alt="Estrus Comparison">    
+            <p>
+                In the figure, the Temperature is almost the same in both periods, but the activity level is much higher in the estrus period.
+                <br>Still, the activity level is not a good indicator to predict the estrus period.
+                <br>Let's see the reason in the next graph:
+            </p>
+        <img src="image/activity_temp_patterns.png" alt="Activity and Temperature Comparison through out the day.">
+        </section>
         
-        <label for="dataType">Select Data Type:</label>
-        <select id="dataType">
-            <option value="act">Activity</option>
-            <option value="temp">Temperature</option>
-        </select>
-
-        <label>Select IDs:</label>
-        <div id="id-container">
-            <!-- Checkboxes will be dynamically added here -->
-            <label><input type="checkbox" value="1" checked>ID 1</label>
-            <label><input type="checkbox" value="2" checked>ID 2</label>
-            <label><input type="checkbox" value="3" checked>ID 3</label>
-            <label><input type="checkbox" value="4" checked>ID 4</label>
-            <label><input type="checkbox" value="5" checked>ID 5</label>
-            <label><input type="checkbox" value="6" checked>ID 6</label>
-            <label><input type="checkbox" value="7" checked>ID 7</label>
-            <label><input type="checkbox" value="8" checked>ID 8</label>
-            <label><input type="checkbox" value="9" checked>ID 9</label>
-            <label><input type="checkbox" value="10" checked>ID 10</label>
-            <label><input type="checkbox" value="11" checked>ID 11</label>
-            <label><input type="checkbox" value="12" checked>ID 12</label>
-            <label><input type="checkbox" value="13" checked>ID 13</label>
-            <button id="selectAll">Select All</button>
-            <button id="clearAll">Clear All</button>
-        </div>
-
-        <button id="updatePlot">Update Plot</button>
-        <button id="observe">Compare</button>
+        <section class="visualization">
+            <div id="chart"></div>
+        </section>
+        
+        <div class="spacer"></div>
     </div>
 
-    <div id="scatterplot-controls" style="display:none;">
-        <label for="scatterplotSex">Select Sex:</label>
-        <select id="scatterplotSex">
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-        </select>
-
-        <label for="scatterplotId">Select ID:</label>
-        <select id="scatterplotId">
-            <option value="1">ID 1</option>
-            <option value="2">ID 2</option>
-            <option value="3">ID 3</option>
-            <option value="4">ID 4</option>
-            <option value="5">ID 5</option>
-            <option value="6">ID 6</option>
-            <option value="7">ID 7</option>
-            <option value="8">ID 8</option>
-            <option value="9">ID 9</option>
-            <option value="10">ID 10</option>
-            <option value="11">ID 11</option>
-            <option value="12">ID 12</option>
-            <option value="13">ID 13</option>
-        </select>
-
-        <label for="dayNight">Select Day/Night:</label>
-        <select id="dayNight">
-            <option value="all">All</option>
-            <option value="day">Day</option>
-            <option value="night">Night</option>
-        </select>
-
-        <label for="estrus">Select Estrus:</label>
-        <select id="estrus">
-            <option value="all">All</option>
-            <option value="estrus">Estrus</option>
-            <option value="non-estrus">Non-Estrus</option>
-        </select>
-
-        <button id="updateScatterplot">Update Scatterplot</button>
+    <div>
+        <section class="conclusion">
+            <h2>Visualization Complete</h2>
+            <p>You've seen the transition from daily patterns to PCA visualization.</p>
+        </section>
     </div>
-
-    <div id="lineplot-container"></div>
-    <div id="scatterplot-container" style="display:none;"></div>
-    <div id="tooltip"></div>
 </body>
 </html>
