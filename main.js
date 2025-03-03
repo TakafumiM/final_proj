@@ -479,9 +479,9 @@ function handleScroll() {
     
     const scrollFraction = scrollTop / (documentHeight - windowHeight);
     
-    if (scrollFraction < 0.6) {
+    if (scrollFraction < 0.8) {
         transitionToDaily();
-    } else if (scrollFraction >= 0.6) {
+    } else if (scrollFraction >= 0.8) {
         transitionToPCA();
     }
 }
