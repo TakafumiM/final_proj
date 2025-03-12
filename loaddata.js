@@ -1,7 +1,7 @@
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7.9.0/+esm";
 
 export async function loadMouseCsv() {
-    return await d3.csv('mouse.csv', (row) => ({
+    return await d3.csv('data/mouse.csv', (row) => ({
         time: +row.time,
         day: +row.day,
         hour: +row.hour,
@@ -63,5 +63,15 @@ export async function loadMouseCsv() {
         non_estrus_night: +row.estrus_night_False_True === 1.0,
         estrus_day: +row.estrus_night_True_False === 1.0,
         estrus_night: +row.estrus_night_True_True === 1.0,
+    }));
+}
+
+export async function loadf1Csv() {
+    return await d3.csv('data/f1_grouped.csv', (row) => ({
+        hour: +row.hour,
+        is_estrus: +row.is_estrus === 'True',
+        is_night: +row.is_night === 'True',
+        activity: +row.f1_act,
+        temperature: +row.f1_temp,
     }));
 }

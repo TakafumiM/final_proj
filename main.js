@@ -1,4 +1,4 @@
-import { loadMouseCsv } from './loaddata.js';
+import { loadf1Csv } from './loaddata.js';
 
 // Set up dimensions
 const width = 900;
