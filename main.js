@@ -69,37 +69,37 @@ const generateDailyPatternData = () => {
         // Female day
         result.push({
             day,
-            category: "Female - Day",
+            category: "Non-estrus - Day",
             activity: femaleDay.activity[i],
             temperature: femaleDay.temperature[i],
-            color: "#4285F4"
+            color: "#B0D0E8"
         });
         
         // Female night
         result.push({
             day,
-            category: "Female - Night",
+            category: "Non-estrus - Night",
             activity: femaleNight.activity[i],
             temperature: femaleNight.temperature[i],
-            color: "#4255F4"
+            color: "#3A559F"
         });
         
         // Male day
         result.push({
             day,
-            category: "Male - Day",
+            category: "Estrus - Day",
             activity: maleDay.activity[i],
             temperature: maleDay.temperature[i],
-            color: "#EA4335"
+            color: "#F4C145"
         });
         
         // Male night
         result.push({
             day,
-            category: "Male - Night",
+            category: "Estrus - Night",
             activity: maleNight.activity[i],
             temperature: maleNight.temperature[i],
-            color: "#C5221F"
+            color: "#E34A44"
         });
     });
     
@@ -211,7 +211,7 @@ const pointsGroup = g.append("g");
 const linesGroup = g.append("g");
 
 // Define line generators for each category
-const categories = ["Female - Day", "Female - Night", "Male - Day", "Male - Night"];
+const categories = ["Non-estrus - Day", "Non-estrus - Night", "Estrus - Day", "Estrus - Night"];
 const lineGenerator = d3.line()
     .x(d => xScaleDaily(d.day))
     .y(d => yScaleActivity(d.activity));
@@ -367,11 +367,11 @@ function transitionToPCA() {
         let pcaCategory;
         
         // Convert daily pattern categories to PCA categories
-        if (category === "Female - Day") {
+        if (category === "Non-estrus - Day") {
             pcaCategory = Math.random() > 0.7 ? "Estrus, Day" : "Non-estrus, Day";
-        } else if (category === "Female - Night") {
+        } else if (category === "Non-estrus - Night") {
             pcaCategory = Math.random() > 0.7 ? "Estrus, Night" : "Non-estrus, Night";
-        } else if (category === "Male - Day") {
+        } else if (category === "Estrus - Day") {
             pcaCategory = Math.random() > 0.3 ? "Estrus, Day" : "Non-estrus, Day";
         } else { // Male - Night
             pcaCategory = Math.random() > 0.3 ? "Estrus, Night" : "Non-estrus, Night";
