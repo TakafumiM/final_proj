@@ -479,9 +479,9 @@ function handleScroll() {
     
     const scrollFraction = scrollTop / (documentHeight - windowHeight);
     
-    if (scrollFraction < 0.8) {
+    if (scrollFraction < 0.6) {
         transitionToDaily();
-    } else if (scrollFraction >= 0.8) {
+    } else if (scrollFraction >= 0.6) {
         transitionToPCA();
     }
 }
@@ -490,3 +490,197 @@ window.addEventListener("scroll", handleScroll);
 
 // Initial call to set up the visualization
 handleScroll();
+
+// Set up dimensions for the interactive visualization
+const width_interactive = 900;
+const height_interactive = 600;
+const margin_interactive = { top: 60, right: 180, bottom: 60, left: 60 };
+const innerWidth_interactive = width_interactive - margin_interactive.left - margin_interactive.right;
+const innerHeight_interactive = height_interactive - margin_interactive.top - margin_interactive.bottom;
+
+// Create SVG element for the interactive visualization
+const svgInteractive = d3.select("#interactive-visualization")
+    .append("svg")
+    .attr("width", width_interactive)
+    .attr("height", height_interactive);
+
+// Create group for the visualization
+const gInteractive = svgInteractive.append("g")
+    .attr("transform", `translate(${margin_interactive.left}, ${margin_interactive.top})`);
+
+// Add title
+const titleInteractive = svgInteractive.append("text")
+    .attr("x", width_interactive / 2)
+    .attr("y", 30)
+    .attr("text-anchor", "middle")
+    .attr("class", "title")
+    .style("font-size", "18px")
+    .style("font-weight", "bold")
+    .text("PCA of Mouse Temperature and Activity by Feature Set");
+
+// Create tooltip
+const tooltipInteractive = d3.select("body")
+    .append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
+
+// Load data from CSV
+d3.csv("data/pca_transformed_data.csv", d3.autoType).then(data => {
+    // Extract unique feature sets
+    const featureSets = Object.keys(data[0])
+        .filter(key => key.endsWith('_PC1'))
+        .map(key => key.replace('_PC1', ''));
+
+    // Define scales
+    let xScale, yScale;
+
+    // Define axes
+    let xAxis, yAxis;
+
+    // Function to update scales and axes
+    function updateScalesAndAxes(data, selectedFeature) {
+        const xExtent = d3.extent(data, d => d[`${selectedFeature}_PC1`]);
+        const yExtent = d3.extent(data, d => d[`${selectedFeature}_PC2`]);
+
+        xScale = d3.scaleLinear()
+            .domain(xExtent)
+            .range([0, innerWidth_interactive]);
+
+        yScale = d3.scaleLinear()
+            .domain(yExtent)
+            .range([innerHeight_interactive, 0]);
+
+        // Remove old axes
+        svgInteractive.select(".x-axis").remove();
+        svgInteractive.select(".y-axis").remove();
+
+        xAxis = svgInteractive.append("g")
+            .attr("class", "x-axis")
+            .attr("transform", `translate(${margin_interactive.left}, ${height_interactive - margin_interactive.bottom})`)
+            .call(d3.axisBottom(xScale));
+
+        yAxis = svgInteractive.append("g")
+            .attr("class", "y-axis")
+            .attr("transform", `translate(${margin_interactive.left}, ${margin_interactive.top})`)
+            .call(d3.axisLeft(yScale));
+    }
+
+    // Function to generate the scatter plot
+    function updateScatterPlot(selectedFeature) {
+        // Update scales and axes
+        updateScalesAndAxes(data, selectedFeature);
+
+        // Remove old points
+        gInteractive.selectAll(".point").remove();
+
+        // Add points
+        gInteractive.selectAll(".point")
+            .data(data)
+            .enter()
+            .append("circle")
+            .attr("class", "point")
+            .attr("cx", d => xScale(d[`${selectedFeature}_PC1`]))
+            .attr("cy", d => yScale(d[`${selectedFeature}_PC2`]))
+            .attr("r", 5)
+            .attr("fill", d => {
+                if (d.category.includes("Estrus") && d.category.includes("Day")) return "#F4C145";
+                if (d.category.includes("Estrus") && d.category.includes("Night")) return "#E34A44";
+                if (d.category.includes("Non-estrus") && d.category.includes("Day")) return "#B0D0E8";
+                return "#3A559F";
+            })
+            .attr("opacity", 0.7)
+            .on("mouseover", function(event, d) {
+                tooltipInteractive.transition()
+                    .duration(200)
+                    .style("opacity", 0.9);
+
+                const html = `<strong>${d.category}</strong><br>PC1: ${d[`${selectedFeature}_PC1`].toFixed(2)}<br>PC2: ${d[`${selectedFeature}_PC2`].toFixed(2)}`;
+
+                tooltipInteractive.html(html)
+                    .style("left", (event.pageX + 10) + "px")
+                    .style("top", (event.pageY - 28) + "px");
+
+                d3.select(this)
+                    .attr("r", 8)
+                    .attr("stroke", "#333")
+                    .attr("stroke-width", 2);
+            })
+            .on("mouseout", function() {
+                tooltipInteractive.transition()
+                    .duration(500)
+                    .style("opacity", 0);
+
+                d3.select(this)
+                    .attr("r", 5)
+                    .attr("stroke", "none");
+            });
+    }
+
+    // Create selection bar
+    const selectionBar = d3.select("#interactive-visualization")
+        .append("div")
+        .attr("class", "selection-bar")
+        .style("display", "flex")
+        .style("flex-direction", "column") // Arrange items in a column
+        .style("align-items", "center") // Center items horizontally
+        .style("margin-bottom", "20px");
+
+    // First row of feature sets (f1 to f13)
+    const selectionBarRow1 = selectionBar.append("div")
+        .style("display", "flex");
+
+    // Second row of feature sets (m1 to m13)
+    const selectionBarRow2 = selectionBar.append("div")
+        .style("display", "flex");
+
+    featureSets.forEach(featureSet => {
+        const row = featureSet.startsWith("f") ? selectionBarRow1 : selectionBarRow2;
+
+        row.append("div")
+            .attr("class", "selection-item")
+            .attr("id", featureSet) // Add id for easier selection
+            .style("padding", "5px") // Reduce padding
+            .style("margin", "2px") // Reduce margin
+            .style("border", "1px solid #ccc")
+            .style("cursor", "pointer")
+            .style("font-size", "0.8em") // Reduce font size
+            .style("min-width", "30px") // Set a minimum width for alignment
+            .style("text-align", "center") // Center the text
+            .text(featureSet)
+            .on("click", function(event, d) {
+                updateScatterPlot(featureSet);
+            });
+    });
+
+    // Add legend
+    const legendInteractive = svgInteractive.append("g")
+        .attr("class", "legend")
+        .attr("transform", `translate(${width_interactive - margin_interactive.right + 20}, ${margin_interactive.top})`);
+
+    const categoriesInteractive = [
+        { category: "Non-estrus, Day", color: "#B0D0E8" },
+        { category: "Non-estrus, Night", color: "#3A559F" },
+        { category: "Estrus, Day", color: "#F4C145" },
+        { category: "Estrus, Night", color: "#E34A44" }
+    ];
+
+    legendInteractive.selectAll(".legend-item")
+        .data(categoriesInteractive)
+        .join("g")
+        .attr("class", "legend-item")
+        .attr("transform", (d, i) => `translate(0, ${i * 25})`)
+        .call(g => {
+            g.append("circle")
+                .attr("r", 6)
+                .attr("fill", d => d.color);
+
+            g.append("text")
+                .attr("x", 15)
+                .attr("y", 4)
+                .text(d => d.category)
+                .style("font-size", "0.8em");
+        });
+
+    // Initial scatter plot
+    updateScatterPlot(featureSets[0]);
+});
