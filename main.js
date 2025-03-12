@@ -307,7 +307,7 @@ function transitionToPCA() {
     // Update title
     title.transition()
         .duration(1000)
-        .text("PCA of Mouse Temperature and Activity Colored by Estrus and Day/Night States");
+        .text("PCA of a Female Mouse Temperature and Activity Colored by Estrus and Day/Night States");
     
     // Update x-axis
     xAxis.transition()
@@ -413,7 +413,7 @@ function transitionToDaily() {
     // Update title
     title.transition()
         .duration(1000)
-        .text("Daily Activity Patterns Throughout Experiment");
+        .text("Daily Activity Patterns of a Female Mouse Throughout Experiment");
     
     // Update axes
     xAxis.transition()
@@ -649,6 +649,8 @@ d3.csv("data/pca_transformed_data.csv", d3.autoType).then(data => {
             .text(featureSet)
             .on("click", function(event, d) {
                 updateScatterPlot(featureSet);
+                // Update title
+                titleInteractive.text(`PCA of Mouse Temperature and Activity - Mouse ID: ${featureSet}`);
             });
     });
 
